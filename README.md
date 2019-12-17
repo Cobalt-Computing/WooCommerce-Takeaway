@@ -1,6 +1,8 @@
 # WooCommerce-Takeaway
 Created by Simon Preece (Cobalt Computing)
+
 https://cobaltcomputing.co.uk
+
 Modifications to Storefront theme to add functionality for local takeaway ordering system
 
 NOTE: Requires Storefront theme installed (tested up to version 2.4.3) and Date Time Picker Field plugin by By Carlos Moreira
