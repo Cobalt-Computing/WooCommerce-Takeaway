@@ -1,4 +1,4 @@
-//Custom PHP for Osaka 
+//Custom PHP for WooCommerce
 //Created by Simon Preece (Cobalt Computing)
 //https://cobaltcomputing.co.uk
 
