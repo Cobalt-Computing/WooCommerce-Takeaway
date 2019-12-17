@@ -1,0 +1,208 @@
+//Custom PHP for Osaka 
+//Created by Simon Preece (Cobalt Computing)
+//https://cobaltcomputing.co.uk
+
+
+//Remove product pictures and sale flash 
+
+remove_action( 'woocommerce_before_subcategory_title', 'woocommerce_subcategory_thumbnail', 10 );
+remove_action( 'woocommerce_before_single_product_summary', 'woocommerce_show_product_images', 20 );
+remove_action( 'woocommerce_before_single_product_summary', 'woocommerce_show_product_sale_flash', 10 );
+add_filter( 'woocommerce_cart_item_thumbnail', '__return_empty_string' );
+remove_action( 'woocommerce_before_shop_loop_item_title', 'woocommerce_template_loop_product_thumbnail', 10 );
+add_filter('woocommerce_sale_flash', 'woo_custom_hide_sales_flash');
+function woo_custom_hide_sales_flash()
+{
+    return false;
+}
+remove_action(storefront_footer, storefront_credit,20);
+add_filter( 'add_to_cart_text', 'woo_custom_product_add_to_cart_text' );            // < 2.1
+add_filter( 'woocommerce_product_add_to_cart_text', 'woo_custom_product_add_to_cart_text' );  // 2.1 +
+  
+function woo_custom_product_add_to_cart_text() {
+  
+    return __( '+', 'woocommerce' );
+  
+}
+function winwar_add_product_description_into_archive() {
+ the_content();
+} add_action( 'woocommerce_after_shop_loop_item_title', 'winwar_add_product_description_into_archive', 15 );
+add_filter( 'woocommerce_subcategory_count_html', '__return_false' );
+
+
+// Edit Woocomerce loop items display
+ 
+// Change number of products per row to 1
+// Note: this is specific to Storefront theme
+// See https://docs.woocommerce.com/document/change-number-of-products-per-row/
+ 
+add_filter('storefront_loop_columns', 'loop_columns');
+ 
+function loop_columns() {
+return 1;
+}
+ 
+// Remove default image, price, rating, add to cart
+ 
+remove_action( 'woocommerce_before_shop_loop_item_title', 'woocommerce_template_loop_product_thumbnail', 10 );
+remove_action( 'woocommerce_after_shop_loop_item_title', 'woocommerce_template_loop_price', 10 );
+remove_action( 'woocommerce_after_shop_loop_item_title', 'woocommerce_template_loop_rating', 5 );
+remove_action( 'woocommerce_after_shop_loop_item', 'woocommerce_template_loop_add_to_cart', 10 );
+ 
+// Remove sale flash (Storefront)
+ 
+add_action( 'init', 'cobaltc_hide_storefront_sale_flash' );
+ 
+function cobaltc_hide_storefront_sale_flash() {
+remove_action( 'woocommerce_after_shop_loop_item_title', 'woocommerce_show_product_loop_sale_flash', 6 );
+}
+ 
+// Add <div> before product title
+ 
+add_action( 'woocommerce_before_shop_loop_item', 'cobaltc_loop_product_div_flex_open', 8 );
+function cobaltc_loop_product_div_flex_open() {
+echo '<div class="product_table">';
+}
+ 
+// Wrap product title into a <div> with class "one_half"
+ 
+add_action( 'woocommerce_before_shop_loop_item', 'cobaltc_loop_product_div_wrap_open', 9 );
+function cobaltc_loop_product_div_wrap_open() {
+echo '<div class="one_half">';
+}
+ 
+add_action( 'woocommerce_after_shop_loop_item', 'cobaltc_loop_product_div_wrap_close', 6 );
+function cobaltc_loop_product_div_wrap_close() {
+echo '</div>';
+}
+
+// Wrap product price and button into a <div> with class "one_quarter"
+
+function cobaltc_loop_product_div_wrap_open_2() {
+echo '<div class="one_quarter">';
+}
+
+function cobaltc_loop_product_div_wrap_close_2() {
+echo '</div>';
+}
+
+// Re-add and Wrap price into a <div> with class "one_third"
+ 
+add_action( 'woocommerce_after_shop_loop_item', 'cobaltc_loop_product_div_wrap_open_2', 7 );
+add_action( 'woocommerce_after_shop_loop_item', 'woocommerce_template_loop_price', 8 );
+add_action( 'woocommerce_after_shop_loop_item', 'cobaltc_loop_product_div_wrap_close_2', 9 );
+ 
+// Re-add and Wrap add to cart into a <div> with class "one_third"
+ 
+add_action( 'woocommerce_after_shop_loop_item', 'cobaltc_loop_product_div_wrap_open_2', 10 );
+add_action( 'woocommerce_after_shop_loop_item', 'woocommerce_template_loop_add_to_cart', 11 );
+add_action( 'woocommerce_after_shop_loop_item', 'cobaltc_loop_product_div_wrap_close_2', 12 );
+ 
+// Close <div> at the end of product title, price, add to cart divs
+ 
+add_action( 'woocommerce_after_shop_loop_item', 'cobaltc_loop_product_div_flex_close', 13 );
+function cobaltc_loop_product_div_flex_close() {
+echo '</div>';
+}
+
+// Rename "home" in breadcrumb
+
+add_filter( 'woocommerce_breadcrumb_defaults', 'wcc_change_breadcrumb_home_text', '20' );
+function wcc_change_breadcrumb_home_text( $defaults ) {
+    // Change the breadcrumb home text from 'Home' to 'Apartment'
+	$defaults['home'] = 'Menu';
+	return $defaults;
+}
+
+add_action( 'init', 'cobaltc_delay_remove' );
+ 
+function cobaltc_delay_remove() {
+remove_action( 'woocommerce_after_shop_loop', 'woocommerce_catalog_ordering', 10 );
+remove_action( 'woocommerce_before_shop_loop', 'woocommerce_catalog_ordering', 10 );
+}
+remove_action( 'woocommerce_before_shop_loop', 'woocommerce_result_count', 20 );
+remove_action( 'woocommerce_after_shop_loop', 'woocommerce_result_count', 20 );
+	
+// Change the string "Shipping" to "Delivery"
+
+add_filter( 'woocommerce_shipping_package_name', 'custom_shipping_package_name' );
+function custom_shipping_package_name( $name ) {
+  return 'Delivery';
+}
+
+add_filter('gettext', 'custom_strings_translation', 20, 3);
+
+function custom_strings_translation( $translated_text, $text, $domain ) {
+
+  switch ( $translated_text ) {
+    case 'Ship to a different address?' : 
+      $translated_text =  __( 'Deliver to a different address?', '__x__' ); 
+      break;
+  }
+
+  return $translated_text;
+}
+
+add_filter('gettext', 'translate_reply');
+add_filter('ngettext', 'translate_reply');
+
+function translate_reply($translated) {
+$translated = str_ireplace('Shipping', 'Delivery', $translated);
+return $translated;
+}
+
+// Display regular price instead of sale price on product and loop pages
+
+add_filter( 'woocommerce_format_sale_price', 'dcwd_sale_price', 20, 3 );
+function dcwd_sale_price( $price, $regular_price, $sale_price ) {
+	return wc_price( $regular_price );
+}
+
+// Add the delivery time field to the checkout page
+
+add_action('woocommerce_after_order_notes', 'customise_checkout_field');
+function customise_checkout_field($checkout)
+{
+  echo '<div id="customise_checkout_field"><h3>' . __('Delivery / Collection Time') . '</h3>';
+  woocommerce_form_field('customised_field_name', array(
+    'type' => 'text',
+    'class' => array(
+      'form-row-first my-field-class'
+    ) ,
+    'label' => __('<strong>No deliveries before 6PM</strong>') ,
+    'placeholder' => __('Please select a time slot') ,
+    'required' => true,
+  ) , $checkout->get_value('customised_field_name'));
+  echo '</div>';
+}
+
+// Add the delivery time field to checkout process
+
+add_action('woocommerce_checkout_process', 'customise_checkout_field_process');
+function customise_checkout_field_process()
+{
+  // if the field is set, if not then show an error message.
+  if (!$_POST['customised_field_name']) wc_add_notice(__('<strong>Delivery / Collection Time</strong> is a required field.') , 'error');
+}
+
+// Update value of field
+ 
+add_action('woocommerce_checkout_update_order_meta', 'customise_checkout_field_update_order_meta');
+function customise_checkout_field_update_order_meta($order_id)
+{
+  if (!empty($_POST['customised_field_name'])) {
+    update_post_meta($order_id, 'Delivery / Collection Time', sanitize_text_field($_POST['customised_field_name']));
+  }
+}
+
+// Add a delivery time to the emails
+
+add_filter( 'woocommerce_email_order_meta_fields', 'custom_woocommerce_email_order_meta_fields', 10, 3 );
+
+function custom_woocommerce_email_order_meta_fields( $fields, $sent_to_admin, $order ) {
+    $fields['meta_key'] = array(
+        'label' => __( 'Delivery / Collection Time' ),
+        'value' => get_post_meta( $order->id, 'Delivery / Collection Time', true ),
+    );
+    return $fields;
+}
